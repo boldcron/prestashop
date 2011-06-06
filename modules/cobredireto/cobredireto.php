@@ -47,7 +47,9 @@ class cobredireto extends PaymentModule
 	  public function __construct(){
 		    $this->name = 'cobredireto';
 		    $this->tab = 'payments_gateways';
-		    $this->version = '0.1';
+		    $this->version = '1.0.1';
+		    $this->author = 'PrestaShop';
+		    $this->need_instance = 0;		    
 		    
 		    $this->currencies = true;
 		    $this->currencies_mode = 'radio';
