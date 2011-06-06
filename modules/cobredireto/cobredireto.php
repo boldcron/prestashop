@@ -46,7 +46,7 @@ class cobredireto extends PaymentModule
 
 	  public function __construct(){
 		    $this->name = 'cobredireto';
-		    $this->tab = 'payments_gateways';
+		    $this->tab = 'Payment';
 		    $this->version = '0.1';
 		    
 		    $this->currencies = true;
