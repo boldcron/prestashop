@@ -46,7 +46,7 @@ class cobredireto extends PaymentModule
 
 	  public function __construct(){
 		    $this->name = 'cobredireto';
-		    $this->tab = 'Payment';
+		    $this->tab = 'payments_gateways';
 		    $this->version = '0.1';
 		    
 		    $this->currencies = true;
@@ -235,6 +235,9 @@ class cobredireto extends PaymentModule
 	  public function hookPayment($params)
 	  {
         global $smarty;
+
+        if (!$this->active || Configuration::get('CD_COD_LOJA') == '')
+            return ;
 
         $escolhidas = json_decode(Configuration::get('CD_FORMAS'));
         if (!$escolhidas)
