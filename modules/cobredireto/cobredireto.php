@@ -6,7 +6,7 @@ if (!defined('_CAN_LOAD_FILES_'))
 class cobredireto extends PaymentModule
 {
     private	$_html = '';
-	  private $_postErrors = array();
+	private $_postErrors = array();
     private $all_formas = array (
             array(
                 'title'                 => 'Cartões de crédito',
@@ -235,8 +235,6 @@ class cobredireto extends PaymentModule
 	  public function hookPayment($params)
 	  {
         global $smarty;
-        if (!$this->active || Configuration::get('CD_COD_LOJA') == '')
-            return ;
 
         $escolhidas = json_decode(Configuration::get('CD_FORMAS'));
         if (!$escolhidas)
