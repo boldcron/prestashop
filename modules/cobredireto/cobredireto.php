@@ -5,7 +5,7 @@ if (!defined('_CAN_LOAD_FILES_'))
 
 class cobredireto extends PaymentModule {
     private	$_html = '';
-    private $_postErrors = array();
+	private $_postErrors = array();
     private $all_formas = array (
         array(
             'title'                 => 'Cartões de crédito',
@@ -42,15 +42,16 @@ class cobredireto extends PaymentModule {
     );
     
     public $formas;
-    
-    public function __construct() {	  
-        $this->name = 'cobredireto';
-        $this->tab = 'payments_gateways';
-        $this->version = '1.0.1';
-        
-        $this->currencies = true;
-        $this->currencies_mode = 'radio';
-        
+	  public function __construct(){
+	    $this->name = 'cobredireto';
+	    $this->tab = 'payments_gateways';
+	    $this->version = '1.0.1';
+	    $this->author = 'PrestaShop';
+	    $this->need_instance = 0;		    
+	    
+	    $this->currencies = true;
+	    $this->currencies_mode = 'radio';
+
         parent::__construct();
         
         $this->page = basename(__FILE__, '.php');
@@ -234,6 +235,7 @@ class cobredireto extends PaymentModule {
     
     public function hookPayment($params) {
         global $smarty;
+
         if (!$this->active || Configuration::get('CD_COD_LOJA') == '')
             return ;
         

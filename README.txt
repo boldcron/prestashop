@@ -4,9 +4,9 @@ Contributors:
 
 Tags: cobredireto, prestashop
 Module version: 1.0.0
-Tested up to: Prestashop v 1.3.0
+Tested up to: Prestashop v 1.4.3
 Requires at least: 1.0.0
-Stable tag: 1.3.0
+Stable tag: 1.4.3
 
 Módulo de integração do Prestashop com o CobreDireto
 
@@ -27,6 +27,7 @@ versões superiores ... Este é apenas um mais alto que foi verificado.
 == Installation ==
 
 Passos para instalação
+
 1. Descompacte o módulo na raiz da sua instalação do PrestaShop.
 2. Acesse a área administrativa do seu site e clique na aba “Modules”.
 3. Na lista de módulos “Payment modules”, localize o grupo "Payments & Geteways", em seguida
@@ -51,4 +52,6 @@ entre em contato com o CobreDireto pelo endereço http://cobredireto.com.br
 
 = 1.0.1 =
 * Atualizado a biblioteca para funcionar com a versão 1.4.3 do Prestashop.
+
+Para maiores informações acesse http://cobredireto.com.br/integracao
 
