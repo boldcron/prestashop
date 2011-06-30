@@ -3,9 +3,9 @@ Contributors:
     ldmotta(visie.com.br - Implementação do múdulo da visie),
 
 Tags: cobredireto, prestashop
-Module version: 1.0.0
+Module version: 1.0.1
 Tested up to: Prestashop v 1.4.3
-Requires at least: 1.0.0
+Requires at least: 1.0.1
 Stable tag: 1.4.3
 
 Módulo de integração do Prestashop com o CobreDireto
