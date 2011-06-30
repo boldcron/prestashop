@@ -6,43 +6,7 @@ if (!defined('_CAN_LOAD_FILES_'))
 class cobredireto extends PaymentModule {
     private	$_html = '';
 	private $_postErrors = array();
-    private $all_formas = array (
-        array(
-            'title'                 => 'Cartões de crédito',
-            'visa3dc'               => 'Visa VBV',
-            'redecard_mastercard'   => 'Mastercard Komerci',
-            'redecard_diners'       => 'Diners Komerci',
-            'amex_webpos2p'         => 'Amex WebPOS 2P',
-            'redecard_visa'         => 'Komerci Visa',
-            'redecard_ws_visa'      => 'Komerci WS Visa',
-            'cielo2p_master'        => 'Moset Master',
-            'cielo2p_visa'          => 'Moset Visa',
-            'cielo3p_mastercard'    => 'MASTERCARD VBV',
-            'redecard_ws_mastercard'=> 'Komerci WS MASTERCARD',
-            'redecard_ws_diners'    => 'Komerci WS Diners',
-            'setef_hipercard'       => 'Hipercard Setef',
-        ),
-        array(
-            'title'                 => 'Débito/transferência online',
-            'bradesco'              => 'Bradesco',
-            'itau'                  => 'Itaú',
-            'bb'                    => 'Banco do Brasil',
-            'unibanco'              => 'Unibanco',
-            'real'                  => 'Real',
-            'banrisul_pgta'         => 'Banrisul'
-        ),
-        array (
-            'title'                 => 'Boleto bancário',
-            'boleto_bradesco'       => 'Bradesco',
-            'boleto_itau'           => 'Itaú',
-            'boleto_bb'             => 'Banco do Brasil',
-            'boleto_unibanco'       => 'Unibanco',
-            'boleto_real'           => 'Real',
-        )
-    );
-    
-    public $formas;
-	  public function __construct(){
+    public function __construct(){
 	    $this->name = 'cobredireto';
 	    $this->tab = 'payments_gateways';
 	    $this->version = '1.0.1';
@@ -61,11 +25,6 @@ class cobredireto extends PaymentModule {
         if (trim(Configuration::get('CD_COD_LOJA')) == '' || trim(Configuration::get('CD_COD_USER')) == '' || trim(Configuration::get('CD_PASSWORD')) == '')
             $this->warning = $this->l('Você precisa concluir a configuração dos seus dados do CobreDireto');
         
-        foreach($this->all_formas as $tipos) {
-            foreach($tipos as $k=>$v) {
-                $this->formas[] = $k;
-            }
-        }
     }
     
     public function install() {
@@ -74,7 +33,6 @@ class cobredireto extends PaymentModule {
                 OR !Configuration::updateValue('CD_COD_USER', '')
                 OR !Configuration::updateValue('CD_PASSWORD', '')
                 OR !Configuration::updateValue('CD_AMBIENTE', 1)
-                OR !Configuration::updateValue('CD_FORMAS', '[]')
                 OR !$this->registerHook('payment')
                 OR !$this->registerHook('paymentReturn'))
             return false;
@@ -86,7 +44,6 @@ class cobredireto extends PaymentModule {
                 OR !Configuration::deleteByName('CD_COD_USER')
                 OR !Configuration::deleteByName('CD_PASSWORD')
                 OR !Configuration::deleteByName('CD_AMBIENTE')
-                OR !Configuration::deleteByName('CD_FORMAS')
                 OR !parent::uninstall())
             return false;
         return true;
@@ -110,9 +67,6 @@ class cobredireto extends PaymentModule {
             }
             else
                 $this->displayErrors();
-        }
-        elseif (isset($_POST['submitCobreDiretoFormas'])) {
-            Configuration::updateValue('CD_FORMAS', json_encode($_POST['formas_pgto']));
         }
         $this->displayFormSettings();
         return $this->_html;
@@ -165,8 +119,8 @@ class cobredireto extends PaymentModule {
                     <div class="margin-form"><input type="password" size="33" name="password" value="'.htmlentities($password, ENT_COMPAT, 'UTF-8').'" /></div>
                     <label>'.$this->l('Ambiente').'</label>
                     <div class="margin-form">
-                        <input type="radio" name="ambiente" value="1" '.($ambiente ? 'checked="checked"' : '').' /> <label class="t">'.$this->l('Produção').'</label>
-                        <input type="radio" name="ambiente" value="0" '.(!$ambiente ? 'checked="checked"' : '').' /> <label class="t">'.$this->l('Homologação').'</label>
+                        <input type="radio" name="ambiente" value="producao" '.($ambiente=='producao' ? 'checked="checked"' : '').' /> <label class="t">'.$this->l('Produção').'</label>
+                        <input type="radio" name="ambiente" value="teste" '.($ambiente=='teste' ? 'checked="checked"' : '').' /> <label class="t">'.$this->l('Homologação').'</label>
                     </div>
                     <br />
                     <center>
@@ -174,18 +128,7 @@ class cobredireto extends PaymentModule {
                     </center>
                 </fieldset>
             </form>
-		        <form action="'.strval($_SERVER['REQUEST_URI']).'" method="post" style="margin:20px 0px 0px 20px; float:left;">
-			          <fieldset style="width:428px;">
-                    <legend><img src="../img/admin/payment.gif" />'.$this->l('Formas de Pagamento Habilitadas').'</legend>
-                    '.$this->_montaFormas().'
-                    <br />
-                    <br />
-                    <center>
-                        <input type="submit" name="submitCobreDiretoFormas" value="'.$this->l('Salvar Configurações').'" class="button" />
-                    </center>
-                </fieldset>
-            </form>
-		        <div style="clear:both;">
+	        <div style="clear:both;">
             <br />
         ';
     }
@@ -213,46 +156,11 @@ class cobredireto extends PaymentModule {
             return '<p class="fail" style="padding-left: 20px;">Acesso a URL Externa</p>';
     }
     
-    public function _montaFormas() { 
-        $salvas = json_decode(Configuration::get('CD_FORMAS'));
-        if (!$salvas)
-            $salvas = array();
-        $h = '<select name="formas_pgto[]" class="cobredireto_formas" multiple="multiple" style="height: 380px; margin-left: 120px;">';
-        foreach($this->all_formas as $key=>$tipos) {
-            $h .= '<optgroup label="'.$tipos['title'].'">';
-            unset($tipos['title']);
-            foreach($tipos as $k=>$v) {
-                $s = '';
-                if (in_array($k, $salvas))
-                    $s = ' selected="true"';
-                $h .= '<option value="'.$k.'"'.$s.'>'.$v.'</option>';
-            }
-            $h .= '</optgroup>';
-        }
-        $h .= '</select>';
-        return $h;
-    }
-    
     public function hookPayment($params) {
         global $smarty;
-
         if (!$this->active || Configuration::get('CD_COD_LOJA') == '')
             return ;
         
-        $escolhidas = json_decode(Configuration::get('CD_FORMAS'));
-        if (!$escolhidas)
-            $escolhidas = array();
-        $tipos = $this->all_formas;
-        foreach($tipos as $t=>$sec) {
-            foreach($sec as $k=>$v) {
-                if (!in_array($k, $escolhidas) && ($k != 'title'))
-                    unset($tipos[$t][$k]);
-            }
-            if (count($tipos[$t]) == 1)
-                unset($tipos[$t]);
-        }
-        
-        $smarty->assign('tipos', $tipos);
         return $this->display(__FILE__, 'cobredireto.tpl');
     }
     
